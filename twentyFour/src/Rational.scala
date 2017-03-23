@@ -3,11 +3,11 @@
   */
 class Rational (n:Int,d:Int){
  require(d!=0)
-  private val g=gcd(n.abs,d.abs)
   val numer=n/g
   val demon=d/g
+  private val g = gcd(n.abs, d.abs)
 
-  override def toString: String = numer+"/"+demon
+  override def toString: String = numer + "\\" + demon
   def +(that:Rational)=
     new Rational(numer*that.demon+that.numer*demon,demon*that.demon)
 
@@ -25,3 +25,7 @@ class Rational (n:Int,d:Int){
   private def gcd(a:Int,b:Int):Int=
     if(b==0) a else gcd(b,a%b)
 }
+
+object Rational extends {
+  val op = "\\"
+} with BinaryOp

@@ -2,6 +2,82 @@
   * Created by liuang on 2017/3/21.
   */
 object Test {
+  val templates = List(
+    "N*N-N+N",
+    "(N-N)*N*N",
+    "N*N+N*N",
+    "(N+N)*N*N",
+    "N*N*N*N",
+    "(N+N*N)*N",
+    "(N*N-N)*N",
+    "N*N+N+N",
+    "(N/N-N)*N",
+    "(N-(N-N))*N",
+    "N-(N-N-N)",
+    "N+N-(N-N)",
+    "N*(N/N-N)",
+    "(N-N*N)*N",
+    "N*(N-N)+N",
+    "N+N+N/N",
+    "(N-N)*(N-N)",
+    "N+N*N/N",
+    "N*N/(N-N)",
+    "(N+N)*(N+N)",
+    "(N-N)*N/N",
+    "N+(N+N)/N",
+    "N*N/(N+N)",
+    "(N+N)*N/N",
+    "(N*N+N)*N",
+    "(N*N-N)/N",
+    "(N/N+N)*N",
+    "N*N/N/N",
+    "N+N+N-N",
+    "N-(N-N)+N",
+    "N/(N-N/N)",
+    "N+(N-N)*N",
+    "(N+N+N)*N",
+    "N+N*N-N",
+    "N*N-N/N",
+    "(N+N)*N-N",
+    "(N+N)*(N-N)",
+    "(N-N/N)*N",
+    "N*(N+N)+N",
+    "N*N+N/N",
+    "N*N/N-N",
+    "(N+N/N)*N",
+    "N*N*N/N",
+    "(N+N*N)/N",
+    "N+N*N+N",
+    "N-(N-N)*N",
+    "(N-(N+N))*N",
+    "N*N-N-N",
+    "N+N/N+N",
+    "(N-N)*N-N",
+    "(N+N)/N+N",
+    "N*N+N-N",
+    "N/N+N+N",
+    "N*N*N-N",
+    "(N*N+N)/N",
+    "N+N+N*N",
+    "N*(N-N)/N",
+    "N/N*N+N",
+    "N+N*N*N",
+    "N+N+N+N",
+    "N*N/(N*N)",
+    "N+(N+N)*N",
+    "(N-N)*N+N",
+    "(N+N+N)/N",
+    "(N+N)*N+N",
+    "N*N*N+N",
+    "N*N-(N-N)",
+    "N*N-(N+N)",
+    "(N-N-N)*N",
+    "N*N/N+N",
+    "(N+N-N)*N",
+    "N/(N/N-N)",
+    "N*N-N*N"
+  )
+
   def main(args: Array[String]): Unit = {
     val list = List(5)
     val vs = list map { v => (v.toDouble, null, null, null) }
@@ -15,12 +91,15 @@ object Test {
     //      println(x+" "+y)
     //    }
   }
+
   def eval(str:String):Rational=str match {
     case Bracket(part1,expr,part2)=>eval(part1+eval(expr)+part2)
     case Add(expr1,expr2)=>eval(expr1)+eval(expr2)
     case Subtract(expr1,expr2)=>eval(expr1)-eval(expr2)
     case Multiply(expr1,expr2)=>eval(expr1)*eval(expr2)
     case Divide(expr1,expr2)=>eval(expr1)/eval(expr2)
+    case "" => new Rational(0, 1)
+    case Rational(expr1, expr2) => new Rational(expr1 toInt, expr2 toInt)
     case _=>{
       new Rational(str.trim toInt,1)}
   }
@@ -65,4 +144,47 @@ object Test {
     solve0(vs map { v => (v.toDouble, null, null, null) })
   }
 
+  def calculate(template: String, numbers: List[Int]) = {
+    val values = template.split('N')
+    var expression = ""
+    for (i <- 0 to 3) expression = expression + values(i) + numbers(i)
+    if (values.length == 5) expression = expression + values(4)
+    (expression, template, eval(expression))
+  }
+
+  def cal24(input: List[Int]) = {
+    var found = false
+    for (template <- templates; list <- input.permutations) {
+      try {
+        val (expression, tp, result) = calculate(template, list)
+        if (result.numer == 24 && result.demon == 1) {
+          println(input + ":" + tp + ":" + expression)
+          found = true
+        }
+      } catch {
+        case e: Throwable =>
+      }
+    }
+    if (!found) {
+      println(input + ":" + "no result")
+    }
+  }
+
+  def cal24once(input: List[Int]) = {
+    var found = false
+    for (template <- templates; list <- input.permutations if (!found)) {
+      try {
+        val (expression, tp, result) = calculate(template, list)
+        if (result.numer == 24 && result.demon == 1) {
+          println(input + ":" + tp + ":" + expression)
+          found = true
+        }
+      } catch {
+        case e: Throwable =>
+      }
+    }
+    if (!found) {
+      println(input + ":" + "no result")
+    }
+  }
 }
